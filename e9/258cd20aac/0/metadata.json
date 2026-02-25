@@ -21,6 +21,36 @@
     "output_tokens": 98,
     "api_call_count": 11
   },
+  "summary": {
+    "intent": "Enable and test the auto-summarize feature in Entire to automatically generate AI-written outcome summaries at commit time.",
+    "outcome": "Auto-summarize was enabled in settings and a test commit was made, but the outcome was not auto-generated because Entire's summarize feature requires spawning a nested `claude` CLI process, which is blocked inside an active Claude Code session.",
+    "learnings": {
+      "repo": [
+        "The `entire explain --commit \u003csha\u003e` command shows checkpoint metadata (ID, session, tokens, intent, outcome, transcript) linked via the `Entire-Checkpoint` git trailer.",
+        "Auto-summarize is configured in `.entire/settings.json` under `strategy_options.summarize.enabled`.",
+        "Outcome generation requires the `claude` CLI and must be run outside of an active Claude Code session due to nested session restrictions."
+      ],
+      "code": [
+        {
+          "path": ".entire/settings.json",
+          "finding": "Added `strategy_options.summarize.enabled: true` to enable auto-summarize on commit."
+        }
+      ],
+      "workflow": [
+        "Entire's `manual-commit` strategy injects `Entire-Checkpoint` trailers into commit messages automatically via git hooks.",
+        "Outcome summaries can be generated on-demand with `entire explain --checkpoint \u003cid\u003e --generate`, or regenerated with `--force`.",
+        "Running `entire explain --checkpoint \u003cid\u003e --generate` must be done from a terminal outside of Claude Code to avoid nested session conflicts."
+      ]
+    },
+    "friction": [
+      "Auto-summarize silently fails inside a Claude Code session — Entire cannot spawn a nested `claude` CLI process, and no error is surfaced during commit.",
+      "The failure mode for auto-summarize is non-obvious: the outcome field just shows `(not generated)` with no indication of why."
+    ],
+    "open_items": [
+      "Verify that auto-summarize works correctly when committing from a regular terminal outside of Claude Code.",
+      "Investigate whether Entire could surface a warning or fallback when the `claude` CLI cannot be spawned during commit-time summarization."
+    ]
+  },
   "initial_attribution": {
     "calculated_at": "2026-02-25T17:41:58.353517Z",
     "agent_lines": 16,
