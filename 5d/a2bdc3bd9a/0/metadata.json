@@ -20,6 +20,30 @@
     "output_tokens": 869,
     "api_call_count": 10
   },
+  "summary": {
+    "intent": "Verify that the Entire tool's auto-summarize feature works and populate the Outcome field for a checkpoint, then document findings.",
+    "outcome": "Auto-summarize was confirmed to fail when invoked inside a Claude Code session due to nested session restrictions; the workaround `env -u CLAUDECODE entire explain --checkpoint \u003chash\u003e --generate` was validated, observations were documented, and the update was committed.",
+    "learnings": {
+      "repo": [
+        "The Entire tool uses the `claude` CLI to generate summaries and stores structured Outcome fields with Intent, Outcome, Learnings, Friction, and Open Items sections.",
+        "Checkpoint trailers are added to commits in the format `Entire-Checkpoint: \u003chash\u003e`."
+      ],
+      "code": [],
+      "workflow": [
+        "Running `env -u CLAUDECODE entire explain --checkpoint \u003chash\u003e --generate` bypasses the nested Claude Code session restriction that prevents summary generation from within a Claude Code session.",
+        "Auto-summarize on commit works correctly when committing from a terminal outside of Claude Code where `CLAUDECODE` is not set in the environment.",
+        "The nested session restriction is controlled by the `CLAUDECODE` environment variable; unsetting it allows the `claude` CLI to spawn normally."
+      ]
+    },
+    "friction": [
+      "Auto-summarize fails silently during commit with no error surfaced to the user when run inside a Claude Code session.",
+      "The `claude` CLI cannot spawn a nested Claude Code session when `CLAUDECODE` is set, blocking Entire's summarize feature from within the IDE integration."
+    ],
+    "open_items": [
+      "Investigate whether Entire can surface a warning or error when auto-summarize fails due to the nested session restriction.",
+      "Determine if there is a way to make auto-summarize work transparently inside Claude Code sessions without requiring the `env -u CLAUDECODE` workaround."
+    ]
+  },
   "initial_attribution": {
     "calculated_at": "2026-02-25T17:43:57.260434Z",
     "agent_lines": 7,
