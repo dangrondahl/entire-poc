@@ -1,5 +1,3 @@
 version: 1
 trail:
-  attestations:
-    - name: entire-attribution
-      type: custom:entire-attribution
+  attestations: []
