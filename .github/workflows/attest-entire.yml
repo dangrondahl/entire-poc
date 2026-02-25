@@ -96,5 +96,5 @@ jobs:
               --trail "$SHA" \
               --commit "$SHA" \
               --external-url "commit=$COMMIT_URL" \
-              --build-url "$BUILD_URL"
+              --origin-url "$BUILD_URL"
           done
