@@ -10,6 +10,12 @@
 
 - Testing whether `Entire-Checkpoint` trailer is added to commits in `manual-commit` mode
 - Strategy: make a small change, commit, inspect the commit message for trailers
+- Confirmed: trailer is added automatically via git hooks
+
+## Session 3 — Testing Auto-Summarize
+
+- Enabled `strategy_options.summarize.enabled` in `.entire/settings.json`
+- Testing whether `Outcome` is populated automatically on commit
 
 ## Questions to Explore
 
