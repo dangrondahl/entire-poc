@@ -1,0 +1,30 @@
+{
+  "cli_version": "0.4.7",
+  "checkpoint_id": "5a80cbaa8b2f",
+  "session_id": "e5884694-fbfb-46cb-b765-9f353e06a667",
+  "strategy": "manual-commit",
+  "created_at": "2026-02-25T18:41:34.879247Z",
+  "branch": "attest_entire",
+  "checkpoints_count": 0,
+  "files_touched": [
+    ".github/workflows/attest-entire.yml"
+  ],
+  "agent": "Claude Code",
+  "turn_id": "ae2a1a65470b",
+  "token_usage": {
+    "input_tokens": 38,
+    "cache_creation_tokens": 39937,
+    "cache_read_tokens": 1147110,
+    "output_tokens": 3806,
+    "api_call_count": 32
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-02-25T18:41:34.744196Z",
+    "agent_lines": 100,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 100,
+    "agent_percentage": 100
+  }
+}

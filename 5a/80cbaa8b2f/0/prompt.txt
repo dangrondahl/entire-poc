@@ -1,0 +1,13 @@
+ok, let's try the attestation of entire idea
+
+---
+
+[Request interrupted by user for tool use]
+
+---
+
+Kosli needs to authenticate. See flags and reference a `KOSLI_API_TOKEN` secret (I will create it in the repo)
+
+---
+
+Ok. push this branch

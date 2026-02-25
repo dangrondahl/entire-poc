@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.4.7",
+  "checkpoint_id": "5a80cbaa8b2f",
+  "strategy": "manual-commit",
+  "branch": "attest_entire",
+  "checkpoints_count": 0,
+  "files_touched": [
+    ".github/workflows/attest-entire.yml"
+  ],
+  "sessions": [
+    {
+      "metadata": "/5a/80cbaa8b2f/0/metadata.json",
+      "transcript": "/5a/80cbaa8b2f/0/full.jsonl",
+      "context": "/5a/80cbaa8b2f/0/context.md",
+      "content_hash": "/5a/80cbaa8b2f/0/content_hash.txt",
+      "prompt": "/5a/80cbaa8b2f/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 38,
+    "cache_creation_tokens": 39937,
+    "cache_read_tokens": 1147110,
+    "output_tokens": 3806,
+    "api_call_count": 32
+  }
+}
