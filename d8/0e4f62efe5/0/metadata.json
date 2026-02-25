@@ -1,0 +1,32 @@
+{
+  "cli_version": "0.4.7",
+  "checkpoint_id": "d80e4f62efe5",
+  "session_id": "e5884694-fbfb-46cb-b765-9f353e06a667",
+  "strategy": "manual-commit",
+  "created_at": "2026-02-25T22:49:35.877401Z",
+  "branch": "attest_entire",
+  "checkpoints_count": 0,
+  "files_touched": [
+    ".kosli/entire-attribution-schema.json"
+  ],
+  "agent": "Claude Code",
+  "turn_id": "59c3a1a9fc38",
+  "checkpoint_transcript_start": 224,
+  "transcript_lines_at_start": 224,
+  "token_usage": {
+    "input_tokens": 16,
+    "cache_creation_tokens": 65793,
+    "cache_read_tokens": 783235,
+    "output_tokens": 4971,
+    "api_call_count": 12
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-02-25T22:49:35.495283Z",
+    "agent_lines": 70,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 70,
+    "agent_percentage": 100
+  }
+}
