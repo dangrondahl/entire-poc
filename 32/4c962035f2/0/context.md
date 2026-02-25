@@ -1,0 +1,51 @@
+# Session Context
+
+## User Prompts
+
+### Prompt 1
+
+ok, let's try the attestation of entire idea
+
+### Prompt 2
+
+[Request interrupted by user for tool use]
+
+### Prompt 3
+
+Kosli needs to authenticate. See flags and reference a `KOSLI_API_TOKEN` secret (I will create it in the repo)
+
+### Prompt 4
+
+Ok. push this branch
+
+### Prompt 5
+
+Failed. See this log:
+Attesting Entire checkpoint 5a80cbaa8b2f for commit 258e049f289a69fc15a5a95a3c4db7b6317b045b
+{
+  "checkpoint": "5a80cbaa8b2f",
+  "commit": "258e049f289a69fc15a5a95a3c4db7b6317b045b",
+  "has_attribution": false,
+  "attribution_raw": null,
+  "agent_pct": null,
+  "agent_lines": null,
+  "total_lines": null,
+  "human_lines": null,
+  "human_pct": null
+}
+Error: unknown flag: --build-url
+Error: Process completed with exit code 1.
+
+### Prompt 6
+
+Working, but the data is not very usable. Can we try to run:
+```
+entire explain --commit $(git rev-parse HEAD) --raw-transcript --checkpoint <checkpoint>
+```
+
+I don't know what checkpoint is
+
+### Prompt 7
+
+Why is the branch not available at Github? I can see it there?
+
