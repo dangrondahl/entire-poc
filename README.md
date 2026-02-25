@@ -11,3 +11,12 @@ This repo demonstrates how Entire tracks AI-assisted code changes, attributing c
 1. Install Entire CLI
 2. Enable in your repo: `entire enable`
 3. Start coding with your AI agent
+
+## Documentation
+
+- [Core Concepts](docs/concepts.md)
+- [Setup Guide](docs/setup.md)
+
+## Notes
+
+- [Observations](notes/observations.md)
