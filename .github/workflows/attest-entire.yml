@@ -1,0 +1,100 @@
+name: Attest Entire Attribution
+
+on:
+  push:
+
+jobs:
+  attest-entire:
+    name: Record Entire checkpoints in Kosli
+    runs-on: ubuntu-latest
+    env:
+      KOSLI_ORG: dangrondahl
+      KOSLI_FLOW: entire-poc
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Kosli CLI
+        uses: kosli-dev/setup-cli-action@v2
+        with:
+          version: "2.11.44"
+
+      - name: Attest Entire checkpoints for pushed commits
+        env:
+          KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN }}
+        run: |
+          # Determine the range of commits in this push
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.event.after }}"
+
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            # New branch — attest the tip commit only
+            COMMITS="$AFTER"
+          else
+            COMMITS=$(git log --format="%H" "${BEFORE}..${AFTER}")
+          fi
+
+          for SHA in $COMMITS; do
+            # Extract Entire trailers from the commit message
+            COMMIT_BODY=$(git show "$SHA" --format="%B" -s)
+            CHECKPOINT=$(echo "$COMMIT_BODY" | grep "^Entire-Checkpoint:" | awk '{print $2}')
+
+            if [ -z "$CHECKPOINT" ]; then
+              echo "No Entire checkpoint for $SHA — skipping"
+              continue
+            fi
+
+            ATTRIBUTION_RAW=$(echo "$COMMIT_BODY" | grep "^Entire-Attribution:" | sed 's/^Entire-Attribution: //')
+
+            # Parse attribution fields if present; produce JSON-safe values
+            if [ -n "$ATTRIBUTION_RAW" ]; then
+              AGENT_PCT=$(echo "$ATTRIBUTION_RAW" | grep -oE '^[0-9]+')
+              AGENT_LINES=$(echo "$ATTRIBUTION_RAW" | grep -oE '\(([0-9]+)/' | tr -d '(/')
+              TOTAL_LINES=$(echo "$ATTRIBUTION_RAW" | grep -oE '/([0-9]+) lines\)' | tr -d '/ lines)')
+              HUMAN_LINES=$(( TOTAL_LINES - AGENT_LINES ))
+              HUMAN_PCT=$(( 100 - AGENT_PCT ))
+              HAS_ATTRIBUTION=true
+              ATTRIBUTION_JSON="\"$ATTRIBUTION_RAW\""
+            else
+              HAS_ATTRIBUTION=false
+              AGENT_PCT=null
+              AGENT_LINES=null
+              TOTAL_LINES=null
+              HUMAN_LINES=null
+              HUMAN_PCT=null
+              ATTRIBUTION_JSON=null
+            fi
+
+            # Build the attestation JSON
+            cat > entire-attestation.json <<EOF
+          {
+            "checkpoint": "$CHECKPOINT",
+            "commit": "$SHA",
+            "has_attribution": $HAS_ATTRIBUTION,
+            "attribution_raw": $ATTRIBUTION_JSON,
+            "agent_pct": $AGENT_PCT,
+            "agent_lines": $AGENT_LINES,
+            "total_lines": $TOTAL_LINES,
+            "human_lines": $HUMAN_LINES,
+            "human_pct": $HUMAN_PCT
+          }
+          EOF
+
+            echo "Attesting Entire checkpoint $CHECKPOINT for commit $SHA"
+            cat entire-attestation.json
+
+            COMMIT_URL="${{ github.server_url }}/${{ github.repository }}/commit/$SHA"
+            BUILD_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+            kosli attest custom \
+              --type entire-attribution \
+              --name entire-attribution \
+              --attestation-data entire-attestation.json \
+              --flow "$KOSLI_FLOW" \
+              --trail "$SHA" \
+              --commit "$SHA" \
+              --external-url "commit=$COMMIT_URL" \
+              --build-url "$BUILD_URL"
+          done
