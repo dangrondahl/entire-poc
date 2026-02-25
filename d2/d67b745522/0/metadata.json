@@ -1,0 +1,32 @@
+{
+  "cli_version": "0.4.7",
+  "checkpoint_id": "d2d67b745522",
+  "session_id": "e5884694-fbfb-46cb-b765-9f353e06a667",
+  "strategy": "manual-commit",
+  "created_at": "2026-02-25T23:08:41.725706Z",
+  "branch": "attest_entire",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "auth/handler.py"
+  ],
+  "agent": "Claude Code",
+  "turn_id": "764402a7d29c",
+  "checkpoint_transcript_start": 486,
+  "transcript_lines_at_start": 486,
+  "token_usage": {
+    "input_tokens": 6,
+    "cache_creation_tokens": 1357,
+    "cache_read_tokens": 410387,
+    "output_tokens": 675,
+    "api_call_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-02-25T23:08:41.515465Z",
+    "agent_lines": 6,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 6,
+    "agent_percentage": 100
+  }
+}
