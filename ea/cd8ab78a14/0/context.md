@@ -1,0 +1,9 @@
+# Session Context
+
+## User Prompts
+
+### Prompt 1
+
+We're testing out entire workflow here, make a change somewhere, commit, and check if the commit gets an      
+  Entire-Checkpoint trailer this time.
+
