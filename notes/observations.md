@@ -21,6 +21,16 @@
 - Auto-summarize should work normally when committing from a terminal outside of Claude Code
 - `entire explain` `Outcome` field includes: Intent, Outcome, Learnings (Repository/Code/Workflow), Friction, and Open Items
 
+## Session 4 — Kosli Attestation of Entire Checkpoints
+
+- Entire's shadow branch (`entire/checkpoints/v1`) is pushed to GitHub, making checkpoint data available in CI
+- Checkpoint metadata at `<cp[:2]>/<cp[2:]>/0/metadata.json` contains: session_id, agent, files_touched, token_usage, initial_attribution
+- `prompt.txt` contains all session messages separated by `---`; last message = direct trigger for the commit
+- Created custom Kosli attestation type `entire-attribution` with JSON schema and jq governance rule
+- Governance rule (v3): NON-COMPLIANT when `agent_percentage > 90` AND `human_modified == 0` AND sensitive file touched
+- Intent is recorded as audit data but not used in compliance evaluation — intent quality is hard to measure quantitatively
+- `--build-url` is not a valid flag for `kosli attest custom`; use `--origin-url` instead
+
 ## Questions to Explore
 
 - How does attribution work with back-and-forth edits?
