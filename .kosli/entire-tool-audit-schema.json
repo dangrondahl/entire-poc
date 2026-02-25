@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Tool call audit derived from Entire session transcript — records which tools the agent used and checks for deny-rule violations",
+  "type": "object",
+  "required": ["checkpoint", "commit", "tool_usage", "violations_count"],
+  "properties": {
+    "checkpoint":            { "type": "string" },
+    "commit":                { "type": "string" },
+    "settings_hash":         { "type": ["string", "null"], "description": "SHA256 of .claude/settings.json at commit time" },
+    "deny_rules_evaluated":  { "type": "array", "items": { "type": "string" }, "description": "Deny rules from .claude/settings.json that were evaluated" },
+    "tool_usage":            { "type": "object", "description": "Count of calls per tool", "additionalProperties": { "type": "integer" } },
+    "tools_used":            { "type": "array", "items": { "type": "string" } },
+    "total_tool_calls":      { "type": "integer", "minimum": 0 },
+    "unsandboxed_bash_count":{ "type": "integer", "minimum": 0, "description": "Bash calls with dangerouslyDisableSandbox: true" },
+    "deny_rule_violations":  { "type": "array", "description": "Tool calls that matched a deny rule", "items": { "type": "object" } },
+    "violations_count":      { "type": "integer", "minimum": 0 }
+  }
+}
