@@ -1,0 +1,26 @@
+We're testing out entire workflow here, make a change somewhere, commit, and check if the commit gets an      
+  Entire-Checkpoint trailer this time.
+
+---
+
+what does `entire explain` show for that commit
+
+---
+
+what does "outcome" show and when does it get generated
+
+---
+
+enable auto-summarize and try it
+
+---
+
+try it outside the session
+
+---
+
+update the observations file with what we found
+
+---
+
+commit this
