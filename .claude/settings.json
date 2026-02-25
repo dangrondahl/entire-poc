@@ -79,7 +79,8 @@
   "permissions": {
     "deny": [
       "Read(./.entire/metadata/**)",
-      "Read(./.kosli/**)"
+      "Read(./.kosli/**)",
+      "Read(./.claude/**)"
     ]
   }
 }
