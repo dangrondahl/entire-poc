@@ -6,6 +6,11 @@
 - `entire status` correctly shows enabled state
 - MCP server responds to search queries
 
+## Session 2 — Testing Commit Trailers
+
+- Testing whether `Entire-Checkpoint` trailer is added to commits in `manual-commit` mode
+- Strategy: make a small change, commit, inspect the commit message for trailers
+
 ## Questions to Explore
 
 - How does attribution work with back-and-forth edits?
