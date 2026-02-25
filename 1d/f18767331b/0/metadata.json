@@ -1,0 +1,34 @@
+{
+  "cli_version": "0.4.7",
+  "checkpoint_id": "1df18767331b",
+  "session_id": "e5884694-fbfb-46cb-b765-9f353e06a667",
+  "strategy": "manual-commit",
+  "created_at": "2026-02-25T23:40:37.818996Z",
+  "branch": "tools",
+  "checkpoints_count": 0,
+  "files_touched": [
+    ".kosli/parse_tool_audit.py",
+    ".kosli/entire-tool-audit-schema.json",
+    ".github/workflows/attest-entire.yml"
+  ],
+  "agent": "Claude Code",
+  "turn_id": "34e3c6414057",
+  "checkpoint_transcript_start": 641,
+  "transcript_lines_at_start": 641,
+  "token_usage": {
+    "input_tokens": 27,
+    "cache_creation_tokens": 127481,
+    "cache_read_tokens": 2254350,
+    "output_tokens": 3640,
+    "api_call_count": 20
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-02-25T23:40:37.5811Z",
+    "agent_lines": 154,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 154,
+    "agent_percentage": 100
+  }
+}
