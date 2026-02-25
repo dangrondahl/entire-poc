@@ -1,0 +1,32 @@
+{
+  "cli_version": "0.4.7",
+  "checkpoint_id": "1ae9b6e8c026",
+  "session_id": "e5884694-fbfb-46cb-b765-9f353e06a667",
+  "strategy": "manual-commit",
+  "created_at": "2026-02-25T22:52:36.818159Z",
+  "branch": "attest_entire",
+  "checkpoints_count": 0,
+  "files_touched": [
+    ".kosli/flow-template.yml"
+  ],
+  "agent": "Claude Code",
+  "turn_id": "86056d61728e",
+  "checkpoint_transcript_start": 282,
+  "transcript_lines_at_start": 282,
+  "token_usage": {
+    "input_tokens": 8,
+    "cache_creation_tokens": 2034,
+    "cache_read_tokens": 461646,
+    "output_tokens": 945,
+    "api_call_count": 6
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-02-25T22:52:36.61933Z",
+    "agent_lines": 5,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 5,
+    "agent_percentage": 100
+  }
+}
