@@ -118,4 +118,28 @@ jobs:
               --commit "$SHA" \
               --external-url "commit=$COMMIT_URL" \
               --origin-url "$BUILD_URL"
+
+            # Tool audit — parse full.jsonl from the shadow branch
+            CP_TRANSCRIPT_PATH="${CP_DIR}/0/full.jsonl"
+            if git show "FETCH_HEAD:${CP_TRANSCRIPT_PATH}" > checkpoint-full.jsonl 2>/dev/null; then
+              python3 .kosli/parse_tool_audit.py \
+                checkpoint-full.jsonl \
+                .claude/settings.json \
+                "$CHECKPOINT" \
+                "$SHA" \
+                tool-audit.json
+
+              echo "Attesting tool audit for checkpoint $CHECKPOINT"
+              cat tool-audit.json
+
+              kosli attest custom \
+                --type entire-tool-audit \
+                --name entire-tool-audit \
+                --attestation-data tool-audit.json \
+                --flow "$KOSLI_FLOW" \
+                --trail "$SHA" \
+                --origin-url "$BUILD_URL"
+            else
+              echo "No transcript found for $CHECKPOINT — skipping tool audit"
+            fi
           done
