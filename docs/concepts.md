@@ -19,3 +19,9 @@ Entire tracks what percentage of changes were agent-written vs human-written, re
 ```
 Entire-Attribution: 73% agent (146/200 lines)
 ```
+
+See [Attribution](attribution.md) for a detailed breakdown of how this is calculated.
+
+## CLI
+
+See [CLI Commands](cli-commands.md) for a full reference.
