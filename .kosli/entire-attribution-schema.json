@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Entire AI attribution data for a git commit checkpoint",
+  "type": "object",
+  "required": ["checkpoint", "commit", "files_touched", "attribution"],
+  "properties": {
+    "checkpoint": {
+      "type": "string",
+      "description": "Entire checkpoint ID (12-char hex)"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Entire session UUID"
+    },
+    "agent": {
+      "type": "string",
+      "description": "AI agent that produced the changes (e.g. Claude Code)"
+    },
+    "created_at": {
+      "type": "string",
+      "description": "ISO 8601 timestamp when the checkpoint was created"
+    },
+    "branch": {
+      "type": "string",
+      "description": "Git branch the checkpoint was recorded on"
+    },
+    "commit": {
+      "type": "string",
+      "description": "Git commit SHA this attestation is bound to"
+    },
+    "files_touched": {
+      "type": "array",
+      "description": "Files modified during the AI session",
+      "items": { "type": "string" }
+    },
+    "token_usage": {
+      "type": "object",
+      "description": "LLM token consumption for this checkpoint",
+      "properties": {
+        "input_tokens":            { "type": "integer" },
+        "cache_creation_tokens":   { "type": "integer" },
+        "cache_read_tokens":       { "type": "integer" },
+        "output_tokens":           { "type": "integer" },
+        "api_call_count":          { "type": "integer" }
+      }
+    },
+    "attribution": {
+      "type": "object",
+      "description": "Line-level attribution breakdown between agent and human",
+      "required": ["agent_percentage"],
+      "properties": {
+        "calculated_at":    { "type": "string" },
+        "agent_lines":      { "type": "integer", "minimum": 0 },
+        "human_added":      { "type": "integer", "minimum": 0 },
+        "human_modified":   { "type": "integer", "minimum": 0 },
+        "human_removed":    { "type": "integer", "minimum": 0 },
+        "total_committed":  { "type": "integer", "minimum": 0 },
+        "agent_percentage": { "type": "number",  "minimum": 0, "maximum": 100 }
+      }
+    },
+    "attribution_raw": {
+      "type": ["string", "null"],
+      "description": "Raw Entire-Attribution git trailer value, e.g. '73% agent (146/200 lines)'"
+    },
+    "intent": {
+      "type": ["string", "null"],
+      "description": "The user prompt that initiated this AI session (first 500 chars of prompt.txt)"
+    }
+  }
+}
