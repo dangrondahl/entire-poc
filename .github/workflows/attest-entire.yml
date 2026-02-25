@@ -16,6 +16,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Fetch Entire shadow branch
+        run: git fetch origin entire/checkpoints/v1
+
       - name: Install Kosli CLI
         uses: kosli-dev/setup-cli-action@v2
         with:
@@ -30,14 +33,12 @@ jobs:
           AFTER="${{ github.event.after }}"
 
           if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
-            # New branch — attest the tip commit only
             COMMITS="$AFTER"
           else
             COMMITS=$(git log --format="%H" "${BEFORE}..${AFTER}")
           fi
 
           for SHA in $COMMITS; do
-            # Extract Entire trailers from the commit message
             COMMIT_BODY=$(git show "$SHA" --format="%B" -s)
             CHECKPOINT=$(echo "$COMMIT_BODY" | grep "^Entire-Checkpoint:" | awk '{print $2}')
 
@@ -46,41 +47,55 @@ jobs:
               continue
             fi
 
-            ATTRIBUTION_RAW=$(echo "$COMMIT_BODY" | grep "^Entire-Attribution:" | sed 's/^Entire-Attribution: //')
+            # Checkpoint path on the shadow branch: first 2 chars / remaining chars
+            CP_DIR="${CHECKPOINT:0:2}/${CHECKPOINT:2}"
+            CP_META_PATH="${CP_DIR}/0/metadata.json"
+            CP_PROMPT_PATH="${CP_DIR}/0/prompt.txt"
 
-            # Parse attribution fields if present; produce JSON-safe values
+            # Read checkpoint metadata from the shadow branch
+            if ! git show "FETCH_HEAD:${CP_META_PATH}" > checkpoint-metadata.json 2>/dev/null; then
+              echo "Checkpoint metadata not found on shadow branch for $CHECKPOINT — skipping"
+              continue
+            fi
+
+            # Read prompt (intent) if available
+            INTENT=""
+            if git show "FETCH_HEAD:${CP_PROMPT_PATH}" > checkpoint-prompt.txt 2>/dev/null; then
+              INTENT=$(head -c 500 checkpoint-prompt.txt | tr '\n' ' ' | sed 's/"/\\"/g')
+            fi
+
+            # Build attestation JSON from shadow branch metadata + git trailer
+            ATTRIBUTION_RAW=$(echo "$COMMIT_BODY" | grep "^Entire-Attribution:" | sed 's/^Entire-Attribution: //')
             if [ -n "$ATTRIBUTION_RAW" ]; then
-              AGENT_PCT=$(echo "$ATTRIBUTION_RAW" | grep -oE '^[0-9]+')
-              AGENT_LINES=$(echo "$ATTRIBUTION_RAW" | grep -oE '\(([0-9]+)/' | tr -d '(/')
-              TOTAL_LINES=$(echo "$ATTRIBUTION_RAW" | grep -oE '/([0-9]+) lines\)' | tr -d '/ lines)')
-              HUMAN_LINES=$(( TOTAL_LINES - AGENT_LINES ))
-              HUMAN_PCT=$(( 100 - AGENT_PCT ))
-              HAS_ATTRIBUTION=true
               ATTRIBUTION_JSON="\"$ATTRIBUTION_RAW\""
             else
-              HAS_ATTRIBUTION=false
-              AGENT_PCT=null
-              AGENT_LINES=null
-              TOTAL_LINES=null
-              HUMAN_LINES=null
-              HUMAN_PCT=null
               ATTRIBUTION_JSON=null
             fi
 
-            # Build the attestation JSON
-            cat > entire-attestation.json <<EOF
-          {
-            "checkpoint": "$CHECKPOINT",
-            "commit": "$SHA",
-            "has_attribution": $HAS_ATTRIBUTION,
-            "attribution_raw": $ATTRIBUTION_JSON,
-            "agent_pct": $AGENT_PCT,
-            "agent_lines": $AGENT_LINES,
-            "total_lines": $TOTAL_LINES,
-            "human_lines": $HUMAN_LINES,
-            "human_pct": $HUMAN_PCT
+            python3 -c "
+          import json, sys
+
+          meta = json.load(open('checkpoint-metadata.json'))
+          intent = sys.argv[1] if sys.argv[1] else None
+          attribution_raw = sys.argv[2] if sys.argv[2] != 'null' else None
+
+          attestation = {
+            'checkpoint': meta.get('checkpoint_id'),
+            'session_id': meta.get('session_id'),
+            'agent': meta.get('agent'),
+            'created_at': meta.get('created_at'),
+            'branch': meta.get('branch'),
+            'commit': '$SHA',
+            'files_touched': meta.get('files_touched', []),
+            'token_usage': meta.get('token_usage', {}),
+            'attribution': meta.get('initial_attribution', {}),
+            'attribution_raw': attribution_raw,
+            'intent': intent,
           }
-          EOF
+
+          with open('entire-attestation.json', 'w') as f:
+            json.dump(attestation, f, indent=2)
+          " "$INTENT" "${ATTRIBUTION_RAW:-null}"
 
             echo "Attesting Entire checkpoint $CHECKPOINT for commit $SHA"
             cat entire-attestation.json
@@ -92,6 +107,7 @@ jobs:
               --type entire-attribution \
               --name entire-attribution \
               --attestation-data entire-attestation.json \
+              --attachments checkpoint-prompt.txt \
               --flow "$KOSLI_FLOW" \
               --trail "$SHA" \
               --commit "$SHA" \
