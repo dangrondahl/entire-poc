@@ -59,10 +59,9 @@ jobs:
             fi
 
             # Read prompt (intent) if available
-            INTENT=""
-            if git show "FETCH_HEAD:${CP_PROMPT_PATH}" > checkpoint-prompt.txt 2>/dev/null; then
-              INTENT=$(head -c 500 checkpoint-prompt.txt | tr '\n' ' ' | sed 's/"/\\"/g')
-            fi
+            # prompt.txt contains all session messages separated by "---" lines;
+            # the last message is the one that directly triggered this commit
+            git show "FETCH_HEAD:${CP_PROMPT_PATH}" > checkpoint-prompt.txt 2>/dev/null || true
 
             # Build attestation JSON from shadow branch metadata + git trailer
             ATTRIBUTION_RAW=$(echo "$COMMIT_BODY" | grep "^Entire-Attribution:" | sed 's/^Entire-Attribution: //')
@@ -73,11 +72,17 @@ jobs:
             fi
 
             python3 -c "
-          import json, sys
+          import json, os, sys
 
           meta = json.load(open('checkpoint-metadata.json'))
-          intent = sys.argv[1] if sys.argv[1] else None
-          attribution_raw = sys.argv[2] if sys.argv[2] != 'null' else None
+          attribution_raw = sys.argv[1] if sys.argv[1] != 'null' else None
+
+          # Extract the last message from prompt.txt as intent
+          intent = None
+          if os.path.exists('checkpoint-prompt.txt'):
+            text = open('checkpoint-prompt.txt').read()
+            messages = [m.strip() for m in text.split('---') if m.strip()]
+            intent = messages[-1] if messages else None
 
           attestation = {
             'checkpoint': meta.get('checkpoint_id'),
@@ -95,7 +100,7 @@ jobs:
 
           with open('entire-attestation.json', 'w') as f:
             json.dump(attestation, f, indent=2)
-          " "$INTENT" "${ATTRIBUTION_RAW:-null}"
+          " "${ATTRIBUTION_RAW:-null}"
 
             echo "Attesting Entire checkpoint $CHECKPOINT for commit $SHA"
             cat entire-attestation.json
